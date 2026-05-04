@@ -2,7 +2,7 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-# Get latest Amazon Linux 2023 AMI
+# Get latest Amazon Linux AMI
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -42,7 +42,7 @@ resource "aws_instance" "devops_server" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t2.micro"
 
-  key_name = "your-key-name"   # IMPORTANT
+  key_name = "devops-key"   
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 

@@ -5,16 +5,10 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
-        IMAGE_NAME = "your-dockerhub-user/devops-app:${env.BUILD_NUMBER}"
+        IMAGE_NAME = "byterunner83/devops-app:${env.BUILD_NUMBER}"
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                git 'your-repo-url'
-            }
-        }
 
         stage('Security Scan (Code)') {
             steps {
