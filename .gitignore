@@ -1,3 +1,4 @@
 devops-key.pem
 .env
 awscliv2.zip
+aws/
