@@ -4,7 +4,6 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
         IMAGE_NAME = "byterunner83/devops-app:${env.BUILD_NUMBER}"
     }
 
@@ -23,11 +22,11 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh """
+                    sh '''
                     docker build -t ${IMAGE_NAME} .
                     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                     docker push ${IMAGE_NAME}
-                    """
+                    '''
                 }
             }
         }
