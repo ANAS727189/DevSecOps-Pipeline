@@ -56,10 +56,12 @@ pipeline {
                     )]) {
                         sh """
                         export ANSIBLE_HOST_KEY_CHECKING=False
+                        export ANSIBLE_PIPELINING=True
+                        export ANSIBLE_SSH_RETRIES=3
                         ansible-playbook -i ${IP}, \
                         -u ec2-user \
-                        --private-key $KEY \
-                        --extra-vars 'IMAGE_NAME=${IMAGE_NAME}' \
+                        --private-key \$KEY \
+                        --extra-vars "IMAGE_NAME=${IMAGE_NAME}" \
                         ansible/playbook.yml
                         """
                     }
