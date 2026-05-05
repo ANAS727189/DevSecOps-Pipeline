@@ -61,6 +61,11 @@ resource "aws_instance" "devops_server" {
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+
   tags = {
     Name = "DevOps-Target-Node"
   }

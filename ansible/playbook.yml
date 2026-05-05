@@ -3,6 +3,10 @@
   become: true
 
   tasks:
+    - name: Cleanup old Docker images to save space
+      shell: "docker image prune -af"
+      ignore_errors: true # Don't fail if there's nothing to clean
+
     - name: Wait for SSH to become available
       wait_for_connection:
         timeout: 300
