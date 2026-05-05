@@ -1,0 +1,1 @@
+docker exec -u root -it jenkins bash

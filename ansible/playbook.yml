@@ -7,12 +7,12 @@
       wait_for_connection:
         timeout: 300
 
-    - name: Install Docker and Python dependencies
+    - name: Install Docker and dependencies
       dnf:
         name:
           - docker
           - python3-pip
-          - python3-docker  # This replaces the 'pip: name=docker' task
+          - python3-docker
         state: present
 
     - name: Start and enable Docker service
@@ -27,13 +27,74 @@
         groups: docker
         append: yes
 
+    # --- NODE EXPORTER INSTALLATION ---
+    - name: Download Node Exporter
+      get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+        dest: /tmp/node_exporter.tar.gz
+
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Create Node Exporter Systemd Service
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          [Service]
+          ExecStart=/opt/node_exporter-1.8.1.linux-amd64/node_exporter
+          Restart=always
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Start Node Exporter
+      systemd:
+        name: node_exporter
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    # --- MONITORING STACK DEPLOYMENT ---
+    - name: Create Prometheus Config Directory
+      file:
+        path: /etc/prometheus
+        state: directory
+        mode: '0755'
+
+    - name: Copy Prometheus Configuration
+      copy:
+        src: ../monitoring/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
+
+    - name: Run Prometheus Container
+      docker_container:
+        name: prometheus
+        image: prom/prometheus:latest
+        restart_policy: always
+        network_mode: host
+        volumes:
+          - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        command:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+
+    - name: Run Grafana Container
+      docker_container:
+        name: grafana
+        image: grafana/grafana:latest
+        restart_policy: always
+        ports:
+          - "3000:3000"
+
+    # --- APP DEPLOYMENT ---
     - name: Run application container
       docker_container:
         name: my-app
         image: "{{ IMAGE_NAME }}"
         state: started
         restart_policy: always
-        # Ensure the socket is available if the module needs it
-        docker_host: "unix://var/run/docker.sock"
         ports:
           - "80:3000"
