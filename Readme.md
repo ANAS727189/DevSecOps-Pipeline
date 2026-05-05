@@ -1,4 +1,4 @@
-# Project Documentation: End-to-End DevSecOps CI/CD Pipeline
+# End-to-End DevSecOps CI/CD Pipeline
 
 This project demonstrates a comprehensive DevSecOps lifecycle, integrating automated infrastructure provisioning, security scanning, containerized deployment, and real-time observability.
 
