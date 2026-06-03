@@ -1,3 +1,6 @@
+## Runbook
+This contains the full architectural flow as well as all the commands, variables needed to run this CI/CD pipeline.
+
 ## The Architectural Flow
 
 ```mermaid
