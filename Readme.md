@@ -36,6 +36,37 @@ docker run -d -p 8080:8080 -p 50000:50000 \
   --name jenkins jenkins/jenkins:lts
 ```
 
+### Setup in Windows/Linux
+
+1.  Install Docker Desktop (Windows) or Docker Engine (Linux).
+2. Pull and run the Jenkins container as shown above.
+  
+```bash
+  # In PowerShell (run as Administrator)
+docker run -d -p 8080:8080 -p 50000:50000 `
+  -v jenkins_home:/var/jenkins_home `
+  -v //var/run/docker.sock:/var/run/docker.sock `
+  --name jenkins jenkins/jenkins:lts
+
+  ```
+
+Note: On Windows, use `//var/run/docker.sock` (double slash) instead of `/var/run/docker.sock`.
+
+3. Installs tools inside jenkins container:
+
+ ```bash
+  docker exec -u root -it jenkins bash
+apt update && apt install -y python3 python3-pip ansible wget unzip gnupg lsb-release
+wget https://releases.hashicorp.com/terraform/1.15.1/terraform_1.15.1_linux_amd64.zip
+unzip terraform_1.15.1_linux_amd64.zip && mv terraform /usr/local/bin/
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor -o /etc/apt/keyrings/trivy.gpg
+echo "deb [signed-by=/etc/apt/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/trivy.list
+apt update && apt install -y trivy
+chmod 666 /var/run/docker.sock
+exit
+```
+4. Access Jenkins UI at `http://localhost:8080` and complete the initial setup.
+
 ### Toolchain Installation
 The following tools must be installed inside the Jenkins container to facilitate the pipeline:
 * **Terraform:** v1.15.1
