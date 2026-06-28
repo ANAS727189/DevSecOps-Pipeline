@@ -438,7 +438,7 @@ open http://<EC2_IP>:9090/targets
 open http://<EC2_IP>:3000
 # Add Prometheus: http://localhost:9090
 # Import Dashboard ID: 1860
-
+```
 
 
 ---
